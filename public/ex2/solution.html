@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        
+         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <div class="bg-light text-center p-5 mb-4">
+            <h2>Choose an option:</h2>
+            <label for="limit">Limit:</label>
+            <input id="limit" type="number" min=1 max=5 value=1>
+            <select onchange="getData()" id="type">
+                <option value="customers">Customers</option>
+                <option value="products">Products</option>
+                <option value="suppliers">Suppliers</option>
+            </select>
+            
+        </div>
+        <div id="result">
+
+        </div>
+        <script>
+            async function getData() {
+                const typeVal = document.getElementById("type").value;
+                const limitVal = document.getElementById("limit").value;
+                try {
+                    const response = await axios.get("/data", {
+                        params: {
+                            "type": typeVal,
+                            "limit": limitVal
+                        }
+                    });
+                    generateTable(response.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            function generateTable(dataObj) {
+                const resultDivElem = document.getElementById("result");
+                while (resultDivElem.firstChild) {
+                    resultDivElem.firstChild.remove();
+                }
+                //create h2 element
+                const h2Elem = document.createElement("h2");
+                h2Elem.innerText = dataObj["type"];
+                resultDivElem.appendChild(h2Elem);
+
+                //create table element
+                /*
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                */
+                const tableElem = document.createElement("table");
+                tableElem.className = "table";
+                const tBodyElem = document.createElement("tbody");
+                //create table heading elements
+                const trElem = document.createElement("tr");
+                const tblHeadings = Object.keys(dataObj["records"][0]);
+                for (const headingVal of tblHeadings) { //["name", "price"]
+                    const thElem = document.createElement("th");
+                    thElem.innerText = headingVal;
+                    trElem.appendChild(thElem);
+                }
+                tBodyElem.appendChild(trElem);
+                
+                //create the table body elements
+                //loop through the elements in records array
+                for (let i=0; i<dataObj["records"].length; i++) {
+                    const trElem = document.createElement("tr");
+                    for (let j=0; j<tblHeadings.length; j++) {
+                        const propVal = dataObj["records"][i][tblHeadings[j]];
+                        const tdElem = document.createElement("td");
+                        tdElem.innerText = propVal;
+                        trElem.append(tdElem);
+                    }
+                    tBodyElem.appendChild(trElem);
+                }
+                tableElem.appendChild(tBodyElem);
+                resultDivElem.appendChild(tableElem);
+            }
+        </script>
+</body>
+</html>

@@ -23,9 +23,86 @@
 
         </div>
         <script>
-            function getData() {
- 
-            }
+                async  function getData() 
+                {
+                    const url = "/data"
+                    const q1 = document.getElementById("type").value;
+                    const q2 = document.getElementById("limit").value;
+                    try {
+                        const response = await axios.get(url, {
+                                                params:{
+                                                    "type" : q1,
+                                                    "limit" : q2
+                                                }
+                                            });
+                                            generateTable(response.data);
+                        } catch(error){
+                            console.log(error);
+                                    }
+                 }
+                                    function generateTable(dataObj){
+                                        const resultdivele = document.getElementById("result");
+                                        while (resultdivele.firstChild){
+                                            resultdivele.firstChild.remove();
+                                        }
+                                        // create h2 element 
+                                        const h2ele = document.createElement("h2");
+                                        h2ele.innerText = dataObj["type"];
+                                        resultdivele.appendChild(h2ele);
+
+                                        // create table
+                                        // tbody , tr, th, tr, tr,td 
+                                        const tableEle = document.createElement("table");
+                                        tableEle.className ="table";
+                                        const tbodyEle = document.createElement("tbody");
+
+                                        //create table heading elements
+                                        const trEle = document.createElement("tr");
+
+                                        //array table headings as there is more than 1 key
+                                        const tbheadings = Object.keys(dataObj["records"][0]);
+                                        for(const headingval of tbheadings){
+                                            const thele = document.createElement("th");
+                                            thele.innerText = headingval;
+                                            trEle.appendChild(thele);
+
+                                        }
+                                        tbodyEle.appendChild(trEle);
+                                        // tableEle.appendChild(tbodyEle); cnt append now since havent added the other td
+                                        // resultdivele.appendChild(tableEle);
+                                        //creste table body element
+                                        // loo[ thru the e;ements in the record]
+                                        for (let i=0; i<dataObj["records"].length; i++){
+                                            const trEle = document.createElement("tr");
+                                            for (let j=0; j<tbheadings.length ; j++){
+                                                const propval = dataObj["records"][i][tbheadings[j]];
+                                                const tdele = document.createElement("td");
+                                                tdele.innerText = propval;
+                                                //when ise child vs append
+                                                trEle.appendChild(tdele);
+
+                                            }
+                                            tbodyEle.appendChild(trEle);
+                                        }
+                                        tableEle.appendChild(tbodyEle);
+                                        resultdivele.appendChild(tableEle);
+
+                                    }
+                    
+
+
+
+
+
+
+
+
+
+
+                  
+                  
+                
+            
 
         </script>
 </body>
