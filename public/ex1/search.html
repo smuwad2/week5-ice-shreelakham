@@ -24,6 +24,7 @@
         <script>
             // add event handler code here
             function showHint(){
+                // url of the one you want to trigger
                 const url = "/suggest"
                 var key = document.getElementById("nameInput").value
                 axios.get(url,{
@@ -32,8 +33,10 @@
                     }
                 })
                 .then(response => {
-                    console.log(response.date)
+                    console.log(response.data)
                     document.getElementById("suggestions").innerText = response.data;
+                }) .catch(error =>{
+                    console.log(error);
                 })
 
             }
