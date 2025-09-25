@@ -47,11 +47,6 @@
                 console.log(error);
             }
 
-
-
-
-            
-
         }
 
         function showCategories(categories) {
@@ -67,79 +62,73 @@
         }
 
         async function getItems() {
-    const categoryName = document.getElementById("selectCategory").value;
-    
-    // If "To select" is chosen, do nothing
-    if (categoryName === "0") {
-        showItems([]); // or just return; to show nothing
-        return;
-    }
-    
-    const url = "https://obscure-space-meme-g4wr9wg7wxxj2v967-3000.app.github.dev/items";
-    
-    try {
-        let response;
-        
-        if (categoryName === "all") {
-            // Fetch all items (no category parameter)
-            response = await axios.get(url);
-        } else {
-            // Fetch items for specific category
-            response = await axios.get(url, {
-                params: {
-                    "category": categoryName
-                }
-            });
+            const categoryName = document.getElementById("selectCategory").value;
+            const url = "/items";
+            if (categoryName === "0") {
+                showItems([]); // or just return; to show nothing
+                return;
+            }
+            else if (categoryName ==="all") {
+                 try{
+                    const response = await axios.get(url);
+                    showItems(response["data"]);
+
+                    } catch(errors){
+                        console.log(errors);
+                            }
+            }
+            else{
+                 try{
+                    const response = await axios.get(url,{
+                    params : {
+                        "category" : categoryName
+                    }
+                    });
+                    console.log("hello");
+                    console.log(response);
+                    showItems(response["data"]);
+                    }
+                    catch (errors){
+                        console.log(errors);
+                            }
+            }
         }
-        
-        showItems(response.data);
-        
-    } catch (error) {
-        console.log(error);
-        showItems([]); // Show empty state on error
-    }
-}
-            
-            
-        //  <div class="card" style="width: 18rem;">
-        //         <div class="card-body">
-        //             <h5 class="card-title">Card title</h5>
-        //             <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-        //             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        //             <a href="#" class="card-link">Card link</a>
-        //             <a href="#" class="card-link">Another link</a>
-        //             </div>
-        //             </div>
+
+
 
         function showItems(items) {
             // Display the items in the itemsList div
             // Each item should be displayed in a bootstrap card format
             // The display should be responsive 3 columns on large screens, 2 columns on medium screens, and 1 column on small screens
-            const objArr = items;
-            console.log(items);
-            const divElem = document.getElementById("itemsList");
-            const newdivele = document.createElement("div");
-            for (const obj of objArr){
-                newdivele.className="card";
+            const itemsListDiv = document.getElementById("itemsList");
+            itemsListDiv.replaceChildren();
+            for (const obj in items){
+                let colDiv = document.createElement("div");
+                colDiv.className = "col-4 d-flex justify-content-center";
+
+                let itemDiv = document.createElement("div");
+                itemDiv.className = "card mb-3";
+                itemDiv.style.width = "18rem";
+
                 const cardbody = document.createElement("div");
-                cardbody.className ="card-body";
+                cardbody.className ="card-body text-center";
+
                 const h5ele = document.createElement("h5");
                 h5ele.className="card-title";
-                h5ele.innerText=obj["name"];
+                h5ele.innerText=items[obj]["name"];
+
                 cardbody.appendChild(h5ele);
-                const h6ele = document.createElement("h6");
-                h6ele.className = "card-subtitle";
-                h6ele.innerText = obj["price"];
-                cardbody.appendChild(h6ele);
-                newdivele.appendChild(cardbody);
-                console.log(newdivele);
 
-            }
-            divElem.appendChild(newdivele);
+                const pele = document.createElement("p");
+                pele.className = "card-text";
+                pele.innerText = items[obj]["price"];
 
+                cardbody.appendChild(pele);
+                itemDiv.appendChild(cardbody);
+                colDiv.appendChild(itemDiv);
+                itemsListDiv.appendChild(colDiv);
 
-
-            
+            } 
 
         }
 
