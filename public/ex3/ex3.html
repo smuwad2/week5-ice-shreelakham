@@ -38,7 +38,7 @@
             // Fetch categories from the server using Axios
             // and display them in the select element
             // url: http://localhost:3010/categories
-            const url = "https://obscure-space-meme-g4wr9wg7wxxj2v967-3000.app.github.dev/categories";
+            const url = "/categories";
             try{
                 const response = await axios.get(url);
                 showCategories(response.data);
