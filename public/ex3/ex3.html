@@ -32,7 +32,7 @@
         </div>
     </div>
     
-    <script>
+    <!-- <script>
         async function getCategories() {
             // ["Fruit","Dairy","Confectionary","Vegetable"]
             // Fetch categories from the server using Axios
@@ -94,8 +94,6 @@
             }
         }
 
-
-
         function showItems(items) {
             // Display the items in the itemsList div
             // Each item should be displayed in a bootstrap card format
@@ -132,7 +130,102 @@
 
         }
 
-    </script>
+ </script> -->
+ <script>      
+        async function getCategories(){
+            const url = "/categories";
+            try {const response = await axios.get(url);
+                const data = response.data;
+                // console.log(data);
+                const select = document.getElementById("selectCategory");
+                
+
+                data.forEach(element => {
+                    const option = document.createElement("option");
+                    option.innerText = element;
+                    option.setAttribute("value", element);
+                    select.appendChild(option);
+                });
+            }
+
+            catch(err) {
+                console.log(err);
+            }
+        }
+        
+       async function getItems(){
+            const select_val = document.getElementById("selectCategory").value;
+            const url = "/items"
+            if(select_val !=0 && select_val!= "all"){
+                    try {
+                        const response = await axios.get(url, {
+                        params : {
+                            category : select_val
+                        }
+                    })
+                    const data = response.data;
+                    console.log(data);
+                    displayitem(data)
+
+                }
+                    catch(err) {
+                        console.log(err)
+                    }
+                }
+            else if (select_val === "all"){
+                getItemforAll(url);
+                
+                
+            }
+
+        }
+
+        async function getItemforAll(url){
+            try {
+                const response = await axios.get(url)
+                const data = response.data;
+                console.log(data);
+                displayitem(data)
+            }
+            catch (err){
+                console.log(err);
+            }
+        }
+   
+       async function displayitem(data){
+            
+            const itemsList = document.getElementById("itemsList");
+            while (itemsList.firstChild){
+                itemsList.removeChild(itemsList.firstChild);
+            }
+            data.forEach(element => {
+                const divele = document.createElement("div");
+                divele.classList = "col-4";
+                const card_div = document.createElement("div");
+                card_div.classList.add("card", "mb-3");
+                const cardtitle = document.createElement("h5");
+                cardtitle.classList = "card-title";
+                cardtitle.textContent  = element.name;
+                const cardbody = document.createElement("div");
+                cardbody.classList = "card-body";
+                const cardtext = document.createElement("p");
+                cardtext.classList = "card-text";
+                cardtext.textContent = element.price;
+                
+                cardbody.appendChild(cardtitle)
+                cardbody.appendChild(cardtext);
+                card_div.appendChild(cardbody);
+                // card_div.appendChild(cardheader);
+                divele.appendChild(card_div);
+                itemsList.appendChild(divele);
+            });
+
+            
+        }
+   
+   
+   </script> 
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
